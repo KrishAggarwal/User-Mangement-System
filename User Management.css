@@ -1,0 +1,170 @@
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        background: #eef5f9;
+    }
+
+    .wrapper {
+        height: 100vh;
+    }
+
+    /************************************ Header ****************************************/
+    .header {
+        height: 9vh;
+        background-color: rgba(121, 106, 238, 0.9);
+        color: white;
+        padding: 5px;
+        font-size: 28px;
+        font-weight: bold;
+    }
+
+    img {
+        height: 100%;
+        margin-left: 15px;
+    }  
+
+    #signOut {
+        font-size: 26px;
+    }
+
+    /************************************ Main Content **************************************/
+    .main {
+        height: 82vh;
+    }
+
+    #form {
+        width: 85%;
+        height: 20%;
+        background: white;
+    }
+
+    label {
+        margin-bottom: 10px !important;
+    }
+
+    /************************************ Form nput ****************************************/
+    input,
+    select {
+        border: 1px solid #96b0ff !important;
+        background: #fcfcfc;
+        -webkit-transition: all 0.30s ease-in-out;
+        -moz-transition: all 0.30s ease-in-out;
+        -ms-transition: all 0.30s ease-in-out;
+        -o-transition: all 0.30s ease-in-out;
+    }
+
+    input::placeholder {
+        text-align: center;
+        vertical-align: middle;
+    }
+
+    input:focus,
+    select:focus,
+    #add:hover,
+    #add:focus {
+        outline: none;
+        border: 3px solid #96b0ff !important;
+        box-shadow: 0px 0px 20px #96b0ff !important;
+    }
+
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
+    /************************************ Add Button ****************************************/
+    #add {
+        background: rgba(121, 106, 238, 0.9);
+        color: white;
+    }
+
+    #add:hover {
+        background: rgb(127, 110, 255);
+    }
+
+    #add:active {
+        transform: translateY(2px);
+    }
+
+    /************************************ Output Table ****************************************/
+    .output {
+        height: 80%;
+        padding: 20px 0;
+    }
+
+    .table button {
+        width: 50%;
+        background: transparent;
+    }
+
+    table {
+        width: 85% !important;
+    }
+
+    th {
+        background-color: rgb(136, 123, 237);
+        color: white;
+        border: 2px solid white !important;
+    }
+
+    td {
+        vertical-align: middle !important;
+        font-weight: 500;
+    }
+    .remove, .edit {
+        outline: none !important;
+    }
+
+
+    /************************************ Footer ****************************************/
+    footer {
+        height: 9vh;
+        text-align: center;
+        background-color: rgba(121, 106, 238, 0.9);
+        color: white;
+    }
+
+    /************************************ Vew Detals Modal ****************************************/
+    #showInfo {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 95%;
+        height: 95%;
+        border: 3px solid rgba(121, 106, 238, 0.9);
+    }
+
+    /************************************ Delete Modal ****************************************/
+    .confirmRemove {
+        background-color: rgba(121, 106, 238, 0.9);
+    }
+
+    .confirmRemove:hover {
+        background-color: rgba(121, 106, 238, 1)
+    }
+
+    /************************************ Responsiveness *************************************/
+    @media screen and (max-width: 605px) {
+        .wrapper {
+            height: auto !important;
+        }
+
+        .header {
+            text-align: center;
+            font-size: 18px;
+        }
+
+        img {
+            margin-left: 0px;
+        }
+
+        #form,
+        .output , footer{
+            height: 100%;
+        }
+    }
