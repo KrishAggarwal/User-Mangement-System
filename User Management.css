@@ -18,17 +18,17 @@
         background-color: rgba(121, 106, 238, 0.9);
         color: white;
         padding: 5px;
-        font-size: 28px;
+        font-size: 30px;
         font-weight: bold;
     }
 
     img {
         height: 100%;
         margin-left: 15px;
-    }  
+    }
 
     #signOut {
-        font-size: 26px;
+        font-size: 24px;
     }
 
     /************************************ Main Content **************************************/
@@ -36,17 +36,20 @@
         height: 82vh;
     }
 
-    #form {
-        width: 85%;
-        height: 20%;
+    .formWrapper {
+        justify-content: center;
+        align-items: center;
+        min-height: 15%;
         background: white;
     }
 
-    label {
-        margin-bottom: 10px !important;
+    form {
+        width: 85%;
+        height: 100%;
+        margin: auto;
     }
 
-    /************************************ Form nput ****************************************/
+    /************************************ Form input ****************************************/
     input,
     select {
         border: 1px solid #96b0ff !important;
@@ -57,17 +60,11 @@
         -o-transition: all 0.30s ease-in-out;
     }
 
-    input::placeholder {
-        text-align: center;
-        vertical-align: middle;
-    }
-
     input:focus,
     select:focus,
     #add:hover,
     #add:focus {
         outline: none;
-        border: 3px solid #96b0ff !important;
         box-shadow: 0px 0px 20px #96b0ff !important;
     }
 
@@ -77,29 +74,66 @@
         margin: 0;
     }
 
+    .datepicker.dropdown-menu {
+        z-index: 1050 !important;
+    }
+
     /************************************ Add Button ****************************************/
     #add {
         background: rgba(121, 106, 238, 0.9);
         color: white;
+        border: 2px solid rgba(121, 106, 238, 0.9)
     }
 
     #add:hover {
         background: rgb(127, 110, 255);
     }
 
-    #add:active {
-        transform: translateY(2px);
-    }
 
     /************************************ Output Table ****************************************/
     .output {
-        height: 80%;
-        padding: 20px 0;
+        height: 85%;
     }
 
-    .table button {
-        width: 50%;
-        background: transparent;
+    /************************************ Search Wrapper **************************************/
+    .functionWrapper {
+        height: 17%;
+        width: 85%;
+        padding: 20px 0;
+        align-items: center;
+        justify-content: end;
+        visibility: hidden;
+    }
+
+    .searchInput {
+        font-size: 16px;
+    }
+
+    .searchButton,
+    .cancelButton,
+    .uploadButton,
+    .filterButton {
+        background: white;
+        color: rgb(127, 110, 255);
+        border: 2px solid rgb(127, 110, 255);
+    }
+
+    .searchButton:hover,
+    .cancelButton:hover,
+    .uploadButton:hover,
+    .filterButton:hover {
+        background-color: rgba(121, 106, 238, 0.9);
+        color: white;
+    }
+
+    button:focus,
+    .btn:focus {
+        outline: none !important;
+    }
+
+    /******************************************* Table ***************************************/
+    .table-responsive {
+        height: 70%;
     }
 
     table {
@@ -109,15 +143,63 @@
     th {
         background-color: rgb(136, 123, 237);
         color: white;
-        border: 2px solid white !important;
     }
 
     td {
         vertical-align: middle !important;
         font-weight: 500;
     }
-    .remove, .edit {
+
+    .remove,
+    .edit {
+        width: 50%;
+        background: transparent;
         outline: none !important;
+    }
+
+    tr:hover {
+        height: 120%;
+    }
+
+    /**************************************** Pagination *************************************/
+    .summery {
+        height: 13%;
+        width: 85%;
+    }
+
+    #range {
+        width:fit-content;
+        border: 1px solid rgb(127, 110, 255);
+        background: white;
+        color: black;
+        padding: 8px;
+        display:none;
+    }
+    #paginationWrapper{
+        display:flex;
+        align-items: flex-start;
+        justify-content: end;
+    }
+    .pg-normal {
+        color: rgb(136, 123, 237);
+        background: white;
+        border: 1px solid rgb(127, 110, 255);
+        padding: 8px 16px;
+    }
+
+    .pg-selected {
+        color: white;
+        background: rgb(127, 110, 255);
+        border: 1px solid rgb(127, 110, 255);
+        padding: 8px 16px;
+    }
+
+    #pg-next:active,
+    #pg-prev:active {
+        color: white;
+        background: rgb(127, 110, 255);
+        border: 1px solid rgb(127, 110, 255);
+        padding: 8px 16px;
     }
 
 
@@ -129,7 +211,7 @@
         color: white;
     }
 
-    /************************************ Vew Detals Modal ****************************************/
+    /************************************ View Details Modal ****************************************/
     #showInfo {
         display: flex;
         justify-content: center;
@@ -145,26 +227,83 @@
     }
 
     .confirmRemove:hover {
-        background-color: rgba(121, 106, 238, 1)
+        background-color: rgba(121, 106, 238, 1);
+    }
+
+    /************************************ Edit Modal ****************************************/
+    #updateButton {
+        background-color: rgba(121, 106, 238, 0.9);
+    }
+
+    #updateButton:hover {
+        background-color: rgba(121, 106, 238, 1);
     }
 
     /************************************ Responsiveness *************************************/
-    @media screen and (max-width: 605px) {
-        .wrapper {
+    @media screen and (max-width:768px) {
+        .header {
+            font-size: 24px;
+        }
+    }
+
+    @media screen and (max-width: 576px) {
+
+        .wrapper,
+        .main {
             height: auto !important;
         }
 
         .header {
-            text-align: center;
             font-size: 18px;
+        }
+
+        .header div {
+            padding: 0 !important;
         }
 
         img {
             margin-left: 0px;
         }
 
-        #form,
-        .output , footer{
-            height: 100%;
+        #form {
+            width: 95%;
+        }
+
+        form .formOptions {
+            margin-top: 13px !important;
+        }
+
+        form .formOptions:last-child {
+            margin-bottom: 13px !important;
+        }
+
+        .functionWrapper {
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        .rowInput {
+            padding: 0;
+            text-align: center;
+        }
+
+        .output {
+            margin: 30px
+        }
+
+        .table-responsive {
+            margin-bottom: 20px;
+        }
+        .summery{
+            width: 100%;
+        }
+        #range{
+            margin:auto;
+        }
+        #paginationWrapper {
+            margin-top:15px;
+            justify-content:center;
+            padding:0 !important;
+            overflow-x: scroll;
         }
     }

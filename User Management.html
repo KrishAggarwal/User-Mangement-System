@@ -6,36 +6,35 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Management System</title>
+
     <!-- Bootstrap css -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css"
         integrity="sha384-zCbKRCUGaJDkqS1kPbPd7TveP5iyJE0EjAuZQTgFLD2ylzuqKfdKlfG/eSrtxUkn" crossorigin="anonymous">
-
-    <!-- Bootstrap datepicker css -->
-    <link rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.min.css"
-        integrity="sha512-f0tzWhCwVFS3WeYaofoLWkTP62ObhewQ1EZn65oSYDZUg1+CyywGKkWzm8BxaJj5HGKI72PnMH9jYyIFz+GH7g=="
-        crossorigin="anonymous" referrerpolicy="no-referrer" />
-
     <!-- toastr css -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
+    <!-- Bootstrap datepicker css -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/css/datepicker.css" rel="stylesheet"
+        type="text/css" />
+
+
 
     <!-- Custom css -->
     <link rel="stylesheet" href="User Management.css" id="theme" />
+
 </head>
 
 <body>
     <div class="container-fluid wrapper px-0">
         <!------------------------------------------- Header ----------------------------------->
         <div class="row header mx-0 w-100">
-            <div class="logo h-100 col-2 px-0 d-flex">
-                <img class="bg-white p-1 m-auto" src="https://www.patientbond.com/hubfs/PB_LOGO_041718_Small@2x.png">
+            <div class="logo h-100 col-2 d-flex">
+                <img class="bg-white p-1 h-100 m-auto"
+                    src="https://www.patientbond.com/hubfs/PB_LOGO_041718_Small@2x.png">
             </div>
-            <div class="heading col-8 text-center px-1 d-flex justify-content-center align-items-center">
-                <span class="m-auto">
-                    User Management System
-                </span>
+            <div class="heading col-8 d-flex justify-content-center align-items-center">
+                User Management System
             </div>
-            <div class="col-2 signOut h-100 px-0 text-right d-flex">
+            <div class="col-2 signOut h-100 d-flex">
                 <span onclick="signOut()" id="signOut" class="m-auto">
                     <i class="fa fa-sign-out" aria-hidden="true"></i>
                 </span>
@@ -44,57 +43,88 @@
 
         <!--------------------------------------- Main Content----------------------------------->
         <div class="row main mx-0 w-100">
+
             <!------------------------------------ Input Form ----------------------------------->
-            <form class="form-inline mx-auto row" id="form">
-                <div class="name formOptions form-group col-sm-2">
-                    <label for="name" class="form-label">Name : </label>
-                    <input type="text" class="form-control w-100" id="name" name="name" placeholder="Name">
-                </div>
-                <div class="email formOptions form-group col-sm-2">
-                    <label for="email" class="form-label">Email : </label>
-                    <input type="email" class="form-control w-100" id="email" name="email" placeholder="abc@gmail.com">
-                </div>
-                <div class="category formOptions form-group col-sm-2">
-                    <label for="category" class="form-label">Category : </label>
-                    <select name="category" id="category" class="form-control selectpicker w-100">
-                        <option value="Choose Category">Choose Category</option>
-                        <option value="Developer">Developer</option>
-                        <option value="QA/Tester">QA/Tester</option>
-                        <option value="HR">HR</option>
-                    </select>
-                </div>
-                <div class="dateOfBirth formOptions form-group col-sm-2">
-                    <label for="dateOfBirth" class="form-label">Birthday : </label>
-                    <input type="text" class="form-control w-100" id="dateOfBirth" name="dateOfBirth"
-                        placeholder="Select Date">
-                </div>
-                <div class="number formOptions form-group col-sm-2">
-                    <label for="number" class="form-label">Number :</label>
-                    <input type="text" class="form-control w-100" id="number" name="number" placeholder="XXX-XXX-XXXX"
-                        maxlength="10" />
-                </div>
-                <div class="add formOptions form-group col-sm-2 d-flex justify-content-center">
-                    <button type="button" class="w-75 btn form-control" id="add" name="add" value="add">
-                        Add
-                    </button>
-                </div>
-            </form>
+            <div class="formWrapper row mx-0 w-100">
+                <form class="form-inline" id="form">
+                    <div class="name formOptions form-group my-auto col-sm-2 px-1">
+                        <label for="name" class="form-label">Name :</label><br>
+                        <input type="text" class="form-control w-100" id="name" name="name" placeholder="Name">
+                    </div>
+
+                    <div class="email formOptions form-group my-auto col-sm-2 px-1">
+                        <label for="email" class="form-label">Email : </label>
+                        <input type="email" class="form-control w-100" id="email" name="email"
+                            placeholder="abc@gmail.com">
+                    </div>
+
+                    <div class="category formOptions form-group my-auto col-sm-2 px-1">
+                        <label for="category" class="form-label">Category : </label>
+                        <select name="category" id="category" class="form-control selectpicker w-100">
+                            <option value="Choose Category">Choose Category</option>
+                            <option value="Developer">Developer</option>
+                            <option value="QA/Tester">QA/Tester</option>
+                            <option value="HR">HR</option>
+                        </select>
+                    </div>
+
+                    <div class="dateOfBirth formOptions form-group my-auto col-sm-2 px-1">
+                        <label for="dateOfBirth" class="form-label" data-date-format="mm/dd/yyyy">Birthday : </label>
+                        <input type="text" class="form-control w-100" id="dateOfBirth" name="dateOfBirth"
+                            placeholder="Select Date">
+                    </div>
+
+                    <div class="number formOptions form-group my-auto col-sm-2 px-1">
+                        <label for="number" class="form-label">Number :</label>
+                        <input type="text" class="form-control w-100" id="number" name="number"
+                            placeholder="XXX-XXX-XXXX" maxlength="10" />
+                    </div>
+
+                    <div class="add formOptions form-group col-sm-2 text-center  px-1">
+                        <button type="reset" class=" btn px-3 py-1 m-auto" id="add" value="add">
+                            Add
+                        </button>
+                        <button type="button" class="btn uploadButton m-auto px-3 py-1" id="uploadButton"
+                            onclick="uploadData()">
+                            Upload
+                        </button>
+                    </div>
+                </form>
+            </div>
 
             <!------------------------------------ Output Table ------------------------------->
             <div class="output row mx-0 w-100">
-                <div class="table-responsive">
+
+                <!------------------------------------ Search Button ------------------------------->
+                <div class="row functionWrapper mx-auto py-1">
+                    <div class="rows col-2 d-flex px-0 justify-content-between m-auto">
+                        <input type="number" class="rowInput form-control" placeholder="rows" id="rowInput" value="5">
+                        <button type="button" class="px-2 filterButton" onclick="showRows()"> Filter</button>
+                    </div>
+                    <div class="input-group col-10 pr-0 d-flex">
+                        <input type="text" class="searchInput form-control" id="search" placeholder="Search..">
+                        <button type="button" class=" searchButton px-2" onclick="searchTable()">Search</button>
+                        <button type="button" class=" cancelButton px-2 border-left-0"
+                            onclick="cancelSearch()">Cancel</button>
+                    </div>
+                </div>
+
+                <div class="table-responsive row mx-0 w-100">
                     <table class="table mx-auto my-0 text-center bg-white">
+
                         <thead class="sticky-top">
                             <tr>
-                                <th scope="col">S.No</th>
-                                <th scope="col">Name</th>
-                                <th scope="col">Email</th>
+                                <th scope="col" id="headerSNo" onclick="unsort()">S.No </th>
+                                <th scope="col" onclick="nameSort()" id="headerName">Name
+                                </th>
+                                <th scope="col" onclick="emailSort()" id="headerEmail">Email</th>
                                 <th scope="col">Category</th>
-                                <th scope="col">Birthday</th>
-                                <th scope="col">Number</th>
+                                <th scope="col" onclick="dateOfBirthSort()" id="headerDateOfBirth">Birthday</th>
+                                <th scope="col" onclick="numberSort()" id="headerNumber">Number</th>
                                 <th scope="col">Action</th>
                             </tr>
                         </thead>
+
                         <tbody id="tbody">
                             <tr id="hello">
                                 <td colspan="7">😄😄Welcome Sir. Please Enter Data😄😄</td>
@@ -102,24 +132,41 @@
                         </tbody>
                     </table>
                 </div>
+                <div class=" row mx-auto summery">
+                    <div class="col-sm-4 px-0">
+                        <span id="range"></span>
+                    </div>
+                    <div class="col-sm-8 text-right px-0" id="paginationWrapper">
+                    </div>
+                </div>
+
             </div>
         </div>
 
         <!------------------------------------- Footer --------------------------------------->
         <footer class="footer row w-100 mx-0 sticky-bottom">
-            <h5 class="col-2 p-0 m-auto">
+            <h5 class="col-3 m-auto">
+
                 <a href="https://www.facebook.com/patientbondhealth/" class="text-white">
                     <i class="fa fa-facebook-square" aria-hidden="true"></i>
                 </a>
-                <a href="https://www.linkedin.com/company/patientbond/" class="text-white"><i
-                        class="fa-brands fa-linkedin fa-fw"></i></a>
-                <a href="https://www.instagram.com/kashishh.aggarwal/" class="text-white"><i
-                        class="fa fa-instagram"></i></a>
-                <a href="https://twitter.com/patientbond" class="text-white"><i
-                        class="fa-brands fa-twitter-square"></i></a>
+
+                <a href="https://www.linkedin.com/company/patientbond/" class="text-white">
+                    <i class="fa-brands fa-linkedin fa-fw"></i>
+                </a>
+
+                <a href="https://www.instagram.com/kashishh.aggarwal/" class="text-white">
+                    <i class="fa fa-instagram"></i>
+                </a>
+
+                <a href="https://twitter.com/patientbond" class="text-white">
+                    <i class="fa-brands fa-twitter-square"></i>
+                </a>
+
+
             </h5>
-            <h6 class="col-6 m-auto text-right">Copyright © 2022 PatientBond, Inc. All rights reserved.</h6>
-            <h6 class="col-sm-4 text-right m-auto pr-4 author">Crafted with ❤️ By Krish</h6>
+            <h6 class="col-6 m-auto text-center">Copyright © 2022 PatientBond</h6>
+            <h6 class="col-3 text-center m-auto author">Crafted with ❤️ By Krish</h6>
 
         </footer>
         <!-- Modal for delete row -->
@@ -156,7 +203,7 @@
 
                     <!-- Modal Header -->
                     <div class="modal-header border-0">
-                        <h4 class="modal-title">Person's info</h4>
+                        <h4 class="modal-title">User's info</h4>
                         <button type="button" class="close" data-dismiss="modal">&times;</button>
                     </div>
 
@@ -180,20 +227,19 @@
 
                     <!-- Modal Header -->
                     <div class="modal-header">
-                        <h4 class="modal-title">Edit Person's info</h4>
+                        <h4 class="modal-title">Edit User's info</h4>
                         <button type="button" class="close" data-dismiss="modal">&times;</button>
                     </div>
 
                     <!-- Modal body -->
                     <div class="modal-body" id="editInfo">
-
                     </div>
 
                     <!-- Modal footer -->
                     <div class="modal-footer">
-                        <button type="button" id="saveButton" class="btn btn-danger"
-                            onclick="saveData(delIndex)">Save</button>
-                        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                        <button type="button" id="updateButton" class="btn text-white"
+                            onclick="updateData(delIndex)">Update</button>
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
                     </div>
 
                 </div>
@@ -201,7 +247,7 @@
         </div>
     </div>
 
-    <!-- toastr and datepicker Js -->
+    <!-- Toastr Js -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
 
@@ -210,13 +256,14 @@
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"
         integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
         crossorigin="anonymous"></script>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-fQybjgWLrvvRgtW6bFlB7jaZrFsaBXjsOMm/tB9LTS58ONXgqbR9W8oWht/amnpF"
         crossorigin="anonymous"></script>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.full.min.js"
-        integrity="sha512-AIOTidJAcHBH2G/oZv9viEGXRqDNmfdPVPYOYKGy3fti0xIplnlgMHUGfuNRzC6FkzIo0iIxgFnr9RikFxK+sw=="
-        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <!--Bootstrap Datepicker -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/js/bootstrap-datepicker.js"></script>
+
     <!--Font Awesome -->
     <script src="https://kit.fontawesome.com/ca550e5eb3.js" crossorigin="anonymous"></script>
 

@@ -1,7 +1,18 @@
 var data = [];
+var originalArray = [];
+var pagedData = [];
 var emailRegex =
   /^([a-zA-Z0-9_\.\-\+])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
-
+var nameOrder = false;
+var emailOrder = false;
+var numberOrder = false;
+var dateOfBirthOrder = false;
+var currentPage = 1;
+var from,
+  to,
+  oldPageAnchor,
+  newPageAnchor,
+  noOfRows = 5;
 $(document).ready(function () {
   data = [];
   var name = "",
@@ -10,7 +21,22 @@ $(document).ready(function () {
     dateOfBirth = "",
     number = "";
 
-  //Alphabet valdation for name
+  //Changing search cancel and filter button
+  setInterval(function () {
+    x = window.innerWidth;
+    if (x <= 576) {
+      $(".searchButton").html(`<i class="fas fa-search"></i>`);
+      $(".cancelButton").html(`<i class="fa fa-times" aria-hidden="true"></i>`);
+      $(".filterButton").html(
+        `<i class="fa fa-filter" aria-hidden="true"></i>`
+      );
+    } else {
+      $(".searchButton").html("Search");
+      $(".cancelButton").html("Cancel");
+      $(".filterButton").html(`Filter`);
+    }
+  }, 100);
+  //Alphabet validation for name
   $("#name").on("keypress", (e) => {
     var key = e.keyCode;
     if (!((key >= 65 && key <= 90) || (key >= 97 && key <= 122) || key == 32)) {
@@ -18,15 +44,39 @@ $(document).ready(function () {
     }
   });
 
-  //Bootstrap datepicker
-  $("#dateOfBirth").datetimepicker({
-    timepicker: false,
-    datepicker: true,
-    format: "d-m-Y",
+  //Alphabet validation for name in edit modal
+  $("#edName").on("keypress", (e) => {
+    var key = e.keyCode;
+    if (!((key >= 65 && key <= 90) || (key >= 97 && key <= 122) || key == 32)) {
+      e.preventDefault();
+    }
   });
+
+  //Bootstrap datepicker
+  $("#dateOfBirth")
+    .datepicker({
+      autoclose: true,
+      todayHighlight: true,
+    })
+    .datepicker("update", new Date());
 
   //validation for number
   $("#number").on("keypress", (e) => {
+    var key = e.keyCode;
+    if (!(key >= 48 && key <= 57)) {
+      e.preventDefault();
+    }
+  });
+
+  //Number validation for phone number in edit modal
+  $("#edNumber").on("keypress", (e) => {
+    var key = e.keyCode;
+    if (!(key >= 48 && key <= 57)) {
+      e.preventDefault();
+    }
+  });
+  //validation for row counter
+  $("#rowInput").on("keypress", (e) => {
     var key = e.keyCode;
     if (!(key >= 48 && key <= 57)) {
       e.preventDefault();
@@ -104,22 +154,52 @@ $(document).ready(function () {
     //remove greeting row
     $("#hello").remove();
 
+    //clearing search value on adding every new data
+    $("#search").val();
+
+    // Remove sorting icon from name header
+    $("#headerName").html("Name <i class='fas fa-sort'></i>");
+    $("#headerEmail").html("Email <i class='fas fa-sort'></i>");
+    $("#headerDateOfBirth").html("Birthday <i class='fas fa-sort'></i>");
+    $("#headerNumber").html("Number <i class='fas fa-sort'></i>");
+
+    //Unsorting array
+    if (originalArray.length != 0) {
+      for (let i = 0; i < originalArray.length; i++) {
+        data[i] = originalArray[i];
+      }
+    }
+
     //add data to array
     data.push({
-      name: name,
+      name: name
+        .toLowerCase()
+        .split(" ")
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(" "),
       email: email,
       category: category,
       dateOfBirth: dateOfBirth,
       number: number,
     });
 
-    //calling print table function
-    showTable();
+    showPageNav();
+    showPage(1);
+    var newPageAnchor = document.getElementById("pg" + currentPage);
+    newPageAnchor.className = "pg-selected";
 
+    $(".functionWrapper").css("visibility", "visible");
+
+    //storing original data in a temporary array for sorting
+    for (let i = 0; i < data.length; i++) {
+      originalArray[i] = data[i];
+    }
+
+    //calling print table function
+    // showTable(data);
     toastr.success("Data added successfully");
-    console.log("After add");
+    console.log("After adding data");
     console.log(data);
-    console.log("After add");
   });
 });
 
@@ -142,24 +222,90 @@ function checkDuplicateNumber(checkNumber) {
   return false;
 }
 
+//-------------------------------------Search data in table Function---------------------------------//
+function searchTable() {
+  let content = $("#search").val().toLowerCase();
+  if (content != "") {
+    data = originalArray.filter((item) => {
+      return (
+        item.name.toLowerCase().includes(content) ||
+        item.email.toLowerCase().includes(content) ||
+        item.category.toLowerCase().includes(content) ||
+        item.dateOfBirth.toLowerCase().includes(content) ||
+        item.number.toLowerCase().includes(content)
+      );
+    });
+    showPageNav();
+    showPage(1);
+    console.log("Original array after search");
+    console.log(originalArray);
+    console.log("Search Results");
+    console.log(data);
+  } else toastr.info("Please enter something to search");
+}
+//----------------------------------If user clears the search bar or row filter------------------------------------//
+$("#search").on("keyup", () => {
+  if ($("#search").val() == "") cancelSearch();
+});
+$("#rowInput").on("keyup", () => {
+  if ($("#rowInput").val() == "") noOfRows = 5;
+  showPageNav();
+  showPage(1);
+});
+//-------------------------------Cancel table search function------------------------------//
+function cancelSearch() {
+  $("#search").val("");
+  $("#empty").remove();
+  for (let i = 0; i < originalArray.length; i++) data[i] = originalArray[i];
+  showPageNav();
+  showPage(1);
+  console.log("After canceling search");
+  console.log(data);
+}
+
 //---------------------------------Delete Details Modal Function-----------------------------------//
 function deleteData(index) {
-  console.log(index);
+  for (let i = 0; i < originalArray.length; i++) {
+    if (data[index].email == originalArray[i].email) originalArray.splice(i, 1);
+  }
 
   //delete from array
   data.splice(index, 1);
 
+  // if only one element matches search
+  if (data.length == 0) {
+    for (let i = 0; i < originalArray.length; i++) data[i] = originalArray[i];
+  }
   //print table
-  showTable();
+  // showTable(data);
+  console.log("fd"+pagedData.length);
+  showPageNav();
+  if(data.length % noOfRows==0 && pagedData.length==1)
+    showPage(Math.ceil(data.length / noOfRows));
+  else showPage(currentPage);
 
   //append greeting div
-  if (data.length == 0) {
+  if (originalArray.length == 0) {
+    $("#uploadButton").css("display", "block");
     $("tbody").append(
       `<tr id="hello">
-        <td colspan="7">Hello😄 Enter Some Data</td>
+        <td colspan="7">😄😄Welcome Sir. Please Enter Data😄😄</td>
       </tr>`
     );
+    $(".functionWrapper").css("visibility", "hidden");
+    $("#headerName").html("Name <i class='fas fa-sort'></i>");
+    $("#headerEmail").html("Email <i class='fas fa-sort'></i>");
+    $("#headerDateOfBirth").html("Birthday <i class='fas fa-sort'></i>");
+    $("#headerNumber").html("Number <i class='fas fa-sort'></i>");
   }
+
+  // clearing search box;
+  $("#search").val("");
+
+  console.log("original array after deletion");
+  console.log(originalArray);
+  console.log("Array after deletion");
+  console.log(data);
 }
 
 //---------------------------------Edit Details Modal Function-----------------------------------//
@@ -216,16 +362,16 @@ function editData(index) {
   );
 
   //Bootstrap datepicker
-  $("#edDateOfBirth").datetimepicker({
-    timepicker: false,
-    datepicker: true,
-    format: "d-m-Y",
+  $("#edDateOfBirth").datepicker({
+    autoclose: true,
+    //  defaultDate: `"${data[index].dateOfBirth}"`,
+    defaultDate: "08/07/2001",
   });
 }
 
-//---------------------------------Save Details Modal Function-----------------------------------//
-function saveData(index) {
-  $("#saveButton").removeAttr("data-dismiss");
+//---------------------------------update Details Modal Function-----------------------------------//
+function updateData(index) {
+  $("#updateButton").removeAttr("data-dismiss");
   //checking validation of edited data
   if ($("#edName").val() == "") {
     toastr.warning("Enter Name First");
@@ -256,10 +402,11 @@ function saveData(index) {
     toastr.error("Email already exists");
     return false;
   }
+
   //checking minimum age of user
   if (
     Math.floor(
-      (new Date() - new Date($("#dateOfBirth").val())) /
+      (new Date() - new Date($("#edDateOfBirth").val())) /
         (365.25 * 24 * 60 * 60 * 1000)
     ) < 10
   ) {
@@ -284,7 +431,7 @@ function saveData(index) {
       if (data[i].email == checkEmail && i != index) return true;
     return false;
   }
-  
+
   //check duplicate number
   function checkEditedNumber(checkNumber) {
     for (let i = 0; i < data.length; i++)
@@ -292,21 +439,37 @@ function saveData(index) {
     return false;
   }
 
-  data[index].name = $("#edName").val().replace(/\s+/g, " ").trim();
+  data[index].name = $("#edName")
+    .val()
+    .toLowerCase()
+    .split(" ")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ")
+    .replace(/\s+/g, " ")
+    .trim();
   data[index].email = $("#edEmail").val().replace(/\s+/g, " ").trim();
   data[index].category = $("#edCategory").val();
   data[index].dateOfBirth = $("#edDateOfBirth").val();
   data[index].number = $("#edNumber").val();
-  showTable();
+
+  //printing table
+  // showTable(data);
+  unsort();
+  showRecords(from, to);
+
   toastr.success("Data edited successfully");
-  $("#saveButton").attr("data-dismiss", "modal");
+  $("#updateButton").attr("data-dismiss", "modal");
+  console.log("Original array after editing");
+  console.log(originalArray);
+  console.log("Array After Editing");
+  console.log(data);
 }
 
 //-------------------------------------View Details Modal Function----------------------------------//
 function viewDetails(index) {
   $("#showInfo").html(
     `<div class="container-fluid">
-      <div class="viewName row mx-0 w-100 text-capitalize">
+      <div class="viewName row mx-0 w-100">
         <p>Name: ${data[index].name}</p>
       </div>
       <div class="viewEmail row mx-0 w-100">
@@ -325,10 +488,162 @@ function viewDetails(index) {
   );
 }
 
+//-----------------------------------------Sorting on basis of Name-----------------------------------------//
+function nameSort() {
+  nameOrder = !nameOrder;
+  if (data.length != 0) {
+    if (nameOrder) {
+      $("#headerName").html(
+        `Name <i class="fa fa-sort-asc" aria-hidden="true"></i>`
+      );
+      $("#headerEmail").html("Email <i class='fas fa-sort'></i>");
+      $("#headerDateOfBirth").html("Birthday <i class='fas fa-sort'></i>");
+      $("#headerNumber").html("Number <i class='fas fa-sort'></i>");
+    } else {
+      $("#headerName").html(
+        `Name <i class="fa fa-sort-desc" aria-hidden="true"></i>`
+      );
+      $("#headerEmail").html("Email <i class='fas fa-sort'></i>");
+      $("#headerDateOfBirth").html("Birthday <i class='fas fa-sort'></i>");
+      $("#headerNumber").html("Number <i class='fas fa-sort'></i>");
+    }
+
+    nameOrder
+      ? data.sort((a, b) =>
+          a.name.toLowerCase() > b.name.toLowerCase() ? 1 : -1
+        )
+      : data.sort((a, b) =>
+          a.name.toLowerCase() < b.name.toLowerCase() ? 1 : -1
+        );
+
+    // showTable(da);
+    showRecords(from, to);
+    console.log("Original array after sorting by name");
+    console.log(originalArray);
+
+    console.log("Array after sorting");
+    console.log(data);
+  }
+}
+
+//-----------------------------------------Sorting on basis of Email-----------------------------------------//
+function emailSort() {
+  emailOrder = !emailOrder;
+  if (data.length != 0) {
+    if (emailOrder) {
+      $("#headerEmail").html(
+        `Email <i class="fa fa-sort-asc" aria-hidden="true"></i>`
+      );
+      $("#headerName").html("Name <i class='fas fa-sort'></i>");
+      $("#headerDateOfBirth").html("Birthday <i class='fas fa-sort'></i>");
+      $("#headerNumber").html("Number <i class='fas fa-sort'></i>");
+    } else {
+      $("#headerEmail").html(
+        `Email <i class="fa fa-sort-desc" aria-hidden="true"></i>`
+      );
+      $("#headerName").html("Name <i class='fas fa-sort'></i>");
+      $("#headerDateOfBirth").html("Birthday <i class='fas fa-sort'></i>");
+      $("#headerNumber").html("Number <i class='fas fa-sort'></i>");
+    }
+    emailOrder
+      ? data.sort((a, b) =>
+          a.email.toLowerCase() > b.email.toLowerCase() ? 1 : -1
+        )
+      : data.sort((a, b) =>
+          a.email.toLowerCase() < b.email.toLowerCase() ? 1 : -1
+        );
+
+    // showTable(data);
+    showRecords(from, to);
+    console.log("Original array after sorting by email");
+    console.log(originalArray);
+
+    console.log("Array after sorting");
+    console.log(data);
+  }
+}
+
+//-----------------------------------------Sorting on basis of Birthday-----------------------------------------//
+function dateOfBirthSort() {
+  dateOfBirthOrder = !dateOfBirthOrder;
+  if (data.length != 0) {
+    if (dateOfBirthOrder) {
+      $("#headerDateOfBirth").html(
+        `Birthday <i class="fa fa-sort-asc" aria-hidden="true"></i>`
+      );
+      $("#headerName").html("Name <i class='fas fa-sort'></i>");
+      $("#headerEmail").html("Email <i class='fas fa-sort'></i>");
+      $("#headerNumber").html("Number <i class='fas fa-sort'></i>");
+    } else {
+      $("#headerDateOfBirth").html(
+        `Birthday <i class="fa fa-sort-desc" aria-hidden="true"></i>`
+      );
+      $("#headerName").html("Name <i class='fas fa-sort'></i>");
+      $("#headerEmail").html("Email <i class='fas fa-sort'></i>");
+      $("#headerNumber").html("Number <i class='fas fa-sort'></i>");
+    }
+    dateOfBirthOrder
+      ? data.sort((a, b) =>
+          new Date(a.dateOfBirth).getTime() > new Date(b.dateOfBirth).getTime()
+            ? 1
+            : -1
+        )
+      : data.sort((a, b) =>
+          new Date(a.dateOfBirth).getTime() < new Date(b.dateOfBirth).getTime()
+            ? 1
+            : -1
+        );
+    // showTable(data);
+    showRecords(from, to);
+    console.log("Original array after sorting by date of birth");
+    console.log(originalArray);
+
+    console.log("Array after sorting");
+    console.log(data);
+  }
+}
+
+//-------------------------------------------Sorting on basis of Number-------------------------------------------//
+function numberSort() {
+  numberOrder = !numberOrder;
+  if (data.length != 0) {
+    if (numberOrder) {
+      $("#headerNumber").html(
+        `Number <i class="fa fa-sort-asc" aria-hidden="true"></i>`
+      );
+      $("#headerName").html("Name <i class='fas fa-sort'></i>");
+      $("#headerEmail").html("Email <i class='fas fa-sort'></i>");
+      $("#headerDateOfBirth").html("Birthday <i class='fas fa-sort'></i>");
+    } else {
+      $("#headerNumber").html(
+        `Number <i class="fa fa-sort-desc" aria-hidden="true"></i>`
+      );
+      $("#headerName").html("Name <i class='fas fa-sort'></i>");
+      $("#headerEmail").html("Email <i class='fas fa-sort'></i>");
+      $("#headerDateOfBirth").html("Birthday <i class='fas fa-sort'></i>");
+    }
+    numberOrder
+      ? data.sort((a, b) =>
+          a.number.toLowerCase() > b.number.toLowerCase() ? 1 : -1
+        )
+      : data.sort((a, b) =>
+          a.number.toLowerCase() < b.number.toLowerCase() ? 1 : -1
+        );
+
+    // showTable(data);
+    showRecords(from, to);
+    console.log("Original array after sorting by number");
+    console.log(originalArray);
+
+    console.log("Array after sorting");
+    console.log(data);
+  }
+}
+
 //-------------------------------------Print Table in page Function---------------------------------//
-function showTable() {
+function showTable(array) {
   $("tbody").html("");
-  for (let i = 0; i < data.length; i++) {
+  for (let i = 0; i < array.length; i++) {
     $("#tbody").append(
       `<tr id="row${i + 1}">
         <td
@@ -336,50 +651,50 @@ function showTable() {
           data-toggle="modal"
           data-target="#infoModal"
         >
-          ${i + 1}
+          ${(currentPage - 1) * noOfRows + i + 1}
         </td>
         <td
           style="text-transform:capitalize"
-          onclick="viewDetails(${i})"
+          onclick="viewDetails(${(currentPage - 1) * noOfRows + i})"
           data-toggle="modal"
           data-target="#infoModal"
         >
-          ${data[i].name}
+          ${array[i].name}
         </td>
         <td
-          onclick="viewDetails(${i})"
+          onclick="viewDetails(${(currentPage - 1) * noOfRows + i})"
           data-toggle="modal"
           data-target="#infoModal"
         >
-          ${data[i].email}
+          ${array[i].email}
         </td>
         <td
-          onclick="viewDetails(${i})"
+          onclick="viewDetails(${(currentPage - 1) * noOfRows + i})"
           data-toggle="modal"
           data-target="#infoModal"
         >
-          ${data[i].category}
+          ${array[i].category}
         </td>
         <td
-          onclick="viewDetails(${i})"
+          onclick="viewDetails(${(currentPage - 1) * noOfRows + i})"
           data-toggle="modal"
           data-target="#infoModal"
         >
-          ${data[i].dateOfBirth}
+          ${array[i].dateOfBirth}
         </td>
         <td
-          onclick="viewDetails(${i})"
+          onclick="viewDetails(${(currentPage - 1) * noOfRows + i})"
           data-toggle="modal"
           data-target="#infoModal"
         >
-          ${data[i].number}
+          ${array[i].number}
         </td>
         <td class="d-flex align-items-center h-100">
           <button
             class="btn remove p-0"
             type="button"
-            id="remove${i + 1}"
-            onclick="delData(${i})"
+            id="remove${(currentPage - 1) * noOfRows + i}"
+            onclick="delData(${(currentPage - 1) * noOfRows + i})"
             data-toggle="modal"
             data-target="#removeModal"
           >
@@ -389,8 +704,8 @@ function showTable() {
           <button
             class="btn edit p-0"
             type="button"
-            id="edit${i + 1}"
-            onclick="editData(${i})"
+            id="edit${(currentPage - 1) * noOfRows + i}"
+            onclick="editData(${(currentPage - 1) * noOfRows + i})"
             data-toggle="modal"
             data-target="#editModal"
           >
@@ -399,14 +714,286 @@ function showTable() {
         </td>
       </tr>`
     );
-    if (data[i].category == "Developer") {
+    if (array[i].category == "Developer") {
       $(`#row${i + 1}`).css("background", "rgba(0, 255, 128,.2)");
-    } else if (data[i].category == "QA/Tester") {
+    } else if (array[i].category == "QA/Tester") {
       $(`#row${i + 1}`).css("background", "#fffbe1");
-    } else if (data[i].category == "HR") {
+    } else if (array[i].category == "HR") {
       $(`#row${i + 1}`).css("background", "rgba(255, 211, 229,.5)");
     } else {
-      console.log("error");
+      console.log("Color Error");
     }
   }
+}
+
+//-------------------------------------Unsort table in original array Function---------------------------------//
+function unsort() {
+  if (originalArray.length != 0) {
+    $("#headerName").html("Name <i class='fas fa-sort'></i>");
+    $("#headerEmail").html("Email <i class='fas fa-sort'></i>");
+    $("#headerDateOfBirth").html("Birthday <i class='fas fa-sort'></i>");
+    $("#headerNumber").html("Number <i class='fas fa-sort'></i>");
+    if ($("#search").val() == "") {
+      for (let i = 0; i < originalArray.length; i++) data[i] = originalArray[i];
+      console.log("hello");
+      showPageNav();
+      showPage(1);
+    }
+    // Case for unsorting while search is applied
+    else {
+      searchTable();
+    }
+  }
+}
+var noOfRows = 5;
+function showRows() {
+  noOfRows = $("#rowInput").val();
+  showPageNav();
+  showPage(1);
+}
+//pagination
+
+function showRecords(from, to) {
+  if (from == 0) {
+    $("#pg-prev").css("cursor", "not-allowed");
+    $("#pg-first").css("cursor", "not-allowed");
+    $("#pg-next").css("cursor", "pointer");
+    $("#pg-last").css("cursor", "pointer");
+  } else if (to == originalArray.length) {
+    $("#pg-next").css("cursor", "not-allowed");
+    $("#pg-last").css("cursor", "not-allowed");
+    $("#pg-prev").css("cursor", "pointer");
+    $("#pg-first").css("cursor", "pointer");
+  } else {
+    $("#pg-prev").css("cursor", "pointer");
+    $("#pg-first").css("cursor", "pointer");
+    $("#pg-next").css("cursor", "pointer");
+    $("#pg-last").css("cursor", "pointer");
+  }
+
+  pagedData = data.slice(from, to);
+  showTable(pagedData);
+  $("#range").css("display", "block");
+  if (data.length < to)
+    $("#range").html(
+      `Showing ${from + 1} to ${data.length} entries from ${
+        data.length
+      } entries`
+    );
+  else {
+    $("#range").html(
+      `Showing ${from + 1} to ${to} entries from total ${data.length} entries`
+    );
+  }
+}
+
+function showPage(pageNumber) {
+  console.log("page " + pageNumber);
+  console.log(currentPage);
+  if (data.length != 0) {
+    if (currentPage <= Math.ceil(data.length / noOfRows)) {
+      oldPageAnchor = document.getElementById("pg" + currentPage);
+      oldPageAnchor.className = "pg-normal";
+    }
+    currentPage = pageNumber;
+    newPageAnchor = document.getElementById("pg" + currentPage);
+    newPageAnchor.className = "pg-selected";
+    from = (pageNumber - 1) * noOfRows;
+    to = parseInt((pageNumber - 1) * noOfRows) + parseInt(noOfRows);
+    console.log(currentPage);
+    showRecords(from, to);
+  } else {
+    $("#tbody").html("");
+    $("#tbody").append(
+      `<tr id="empty">
+          <td colspan="7">Oops!! No data found</td>
+        </tr>`
+    );
+    $("#range").html(`Showing 0 entries from total 0 entries`);
+  }
+}
+function firstPage() {
+  showPage(1);
+}
+function prev() {
+  if (currentPage > 1) {
+    showPage(currentPage - 1);
+  }
+}
+function next() {
+  if (currentPage < data.length / noOfRows) {
+    showPage(currentPage + 1);
+  }
+}
+
+function lastPage() {
+  showPage(Math.ceil(data.length / noOfRows));
+}
+
+function showPageNav() {
+  var pagerHtml =
+    '<span onclick="firstPage()" id="pg-first" class="pg-normal"><<</span>' +
+    '<span onclick="prev()" id="pg-prev" class="pg-normal">Previous</span>';
+  for (var page = 1; page <= Math.ceil(data.length / noOfRows); page++) {
+    pagerHtml +=
+      '<span id="pg' +
+      page +
+      '" class="pg-normal" onclick="showPage(' +
+      page +
+      ')">' +
+      page +
+      "</span> ";
+  }
+  pagerHtml +=
+    '<span onclick="next()" class="pg-normal" id="pg-next"> Next</span>' +
+    '<span onclick="lastPage()" id="pg-last" class="pg-normal">>></span>';
+  element = $("#paginationWrapper").html(pagerHtml);
+}
+
+//css for toastr
+toastr.options = {
+  closeButton: true,
+  debug: false,
+  newestOnTop: false,
+  progressBar: false,
+  positionClass: "toast-top-right",
+  preventDuplicates: true,
+  onclick: null,
+  showDuration: "300",
+  hideDuration: "1000",
+  timeOut: "2000",
+  extendedTimeOut: "1000",
+  showEasing: "swing",
+  hideEasing: "linear",
+  showMethod: "fadeIn",
+  hideMethod: "fadeOut",
+};
+
+function uploadData() {
+  originalArray.push(
+    {
+      name: "John",
+      email: "john@gmail.com",
+      category: "Developer",
+      dateOfBirth: "01/02/2000",
+      number: "1234567890",
+    },
+    {
+      name: "Harry",
+      email: "harry@gmail.com",
+      category: "QA/Tester",
+      dateOfBirth: "03/04/2001",
+      number: "1234567891",
+    },
+    {
+      name: "Chris",
+      email: "chris@gmail.com",
+      category: "HR",
+      dateOfBirth: "05/06/2002",
+      number: "1234567892",
+    },
+    {
+      name: "Zoe",
+      email: "zoe@gmail.com",
+      category: "Developer",
+      dateOfBirth: "07/08/2003",
+      number: "1234567893",
+    },
+    {
+      name: "Raven",
+      email: "raven@gmail.com",
+      category: "QA/Tester",
+      dateOfBirth: "09/10/2004",
+      number: "1234567894",
+    },
+    {
+      name: "John1",
+      email: "john1@gmail.com",
+      category: "Developer",
+      dateOfBirth: "01/02/2000",
+      number: "1234567895",
+    },
+    {
+      name: "Harry1",
+      email: "harry1@gmail.com",
+      category: "QA/Tester",
+      dateOfBirth: "03/04/2001",
+      number: "1234567896",
+    },
+    {
+      name: "Chris1",
+      email: "chris1@gmail.com",
+      category: "HR",
+      dateOfBirth: "05/06/2002",
+      number: "1234567897",
+    },
+    {
+      name: "Zoe1",
+      email: "zoe1@gmail.com",
+      category: "Developer",
+      dateOfBirth: "07/08/2003",
+      number: "1234567898",
+    },
+    {
+      name: "Raven1",
+      email: "raven1@gmail.com",
+      category: "QA/Tester",
+      dateOfBirth: "09/10/2004",
+      number: "1234567899",
+    },
+    {
+      name: "John2",
+      email: "john2@gmail.com",
+      category: "Developer",
+      dateOfBirth: "01/02/1999",
+      number: "2234567895",
+    },
+    {
+      name: "Harry2",
+      email: "harry2@gmail.com",
+      category: "QA/Tester",
+      dateOfBirth: "03/04/1998",
+      number: "2234567896",
+    },
+    {
+      name: "Chris2",
+      email: "chris2@gmail.com",
+      category: "HR",
+      dateOfBirth: "05/06/1997",
+      number: "2234567897",
+    },
+    {
+      name: "Zoe2",
+      email: "zoe2@gmail.com",
+      category: "Developer",
+      dateOfBirth: "07/08/1995",
+      number: "2234567898",
+    },
+    {
+      name: "Raven2",
+      email: "raven2@gmail.com",
+      category: "QA/Tester",
+      dateOfBirth: "09/10/1994",
+      number: "2234567899",
+    }
+  );
+  for (let i = 0; i < originalArray.length; i++) data[i] = originalArray[i];
+  $(".functionWrapper").css("visibility", "visible");
+  //$('#uploadButton').css("display", "none");
+  // Remove sorting icon from name header
+  $("#headerSNo").html(
+    "S.No <i class='fa-solid fa-arrow-down-up-across-line'></i>"
+  );
+  $("#headerName").html("Name <i class='fas fa-sort'></i>");
+  $("#headerEmail").html("Email <i class='fas fa-sort'></i>");
+  $("#headerDateOfBirth").html("Birthday <i class='fas fa-sort'></i>");
+  $("#headerNumber").html("Number <i class='fas fa-sort'></i>");
+  showPageNav();
+  showPage(1);
+  var newPageAnchor = document.getElementById("pg" + currentPage);
+  newPageAnchor.className = "pg-selected";
+  console.log("Original array after upload");
+  console.log(originalArray);
+  console.log("Data array after upload");
+  console.log(data);
 }
