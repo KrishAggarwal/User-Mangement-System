@@ -2,25 +2,24 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>User Management System</title>
 
     <!-- Bootstrap css -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css"
-        integrity="sha384-zCbKRCUGaJDkqS1kPbPd7TveP5iyJE0EjAuZQTgFLD2ylzuqKfdKlfG/eSrtxUkn" crossorigin="anonymous">
+        integrity="sha384-zCbKRCUGaJDkqS1kPbPd7TveP5iyJE0EjAuZQTgFLD2ylzuqKfdKlfG/eSrtxUkn" crossorigin="anonymous" />
+
     <!-- toastr css -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" />
+
     <!-- Bootstrap datepicker css -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/css/datepicker.css" rel="stylesheet"
         type="text/css" />
 
-
-
     <!-- Custom css -->
     <link rel="stylesheet" href="User Management.css" id="theme" />
-
 </head>
 
 <body>
@@ -29,7 +28,7 @@
         <div class="row header mx-0 w-100">
             <div class="logo h-100 col-2 d-flex">
                 <img class="bg-white p-1 h-100 m-auto"
-                    src="https://www.patientbond.com/hubfs/PB_LOGO_041718_Small@2x.png">
+                    src="https://www.patientbond.com/hubfs/PB_LOGO_041718_Small@2x.png" />
             </div>
             <div class="heading col-8 d-flex justify-content-center align-items-center">
                 User Management System
@@ -43,19 +42,18 @@
 
         <!--------------------------------------- Main Content----------------------------------->
         <div class="row main mx-0 w-100">
-
             <!------------------------------------ Input Form ----------------------------------->
             <div class="formWrapper row mx-0 w-100">
                 <form class="form-inline" id="form">
                     <div class="name formOptions form-group my-auto col-sm-2 px-1">
-                        <label for="name" class="form-label">Name :</label><br>
-                        <input type="text" class="form-control w-100" id="name" name="name" placeholder="Name">
+                        <label for="name" class="form-label">Name :</label><br />
+                        <input type="text" class="form-control w-100" id="name" name="name" placeholder="Name" />
                     </div>
 
                     <div class="email formOptions form-group my-auto col-sm-2 px-1">
                         <label for="email" class="form-label">Email : </label>
                         <input type="email" class="form-control w-100" id="email" name="email"
-                            placeholder="abc@gmail.com">
+                            placeholder="abc@gmail.com" />
                     </div>
 
                     <div class="category formOptions form-group my-auto col-sm-2 px-1">
@@ -69,9 +67,10 @@
                     </div>
 
                     <div class="dateOfBirth formOptions form-group my-auto col-sm-2 px-1">
-                        <label for="dateOfBirth" class="form-label" data-date-format="mm/dd/yyyy">Birthday : </label>
+                        <label for="dateOfBirth" class="form-label" data-date-format="mm/dd/yyyy">Birthday :
+                        </label>
                         <input type="text" class="form-control w-100" id="dateOfBirth" name="dateOfBirth"
-                            placeholder="Select Date">
+                            placeholder="Select Date" />
                     </div>
 
                     <div class="number formOptions form-group my-auto col-sm-2 px-1">
@@ -80,8 +79,8 @@
                             placeholder="XXX-XXX-XXXX" maxlength="10" />
                     </div>
 
-                    <div class="add formOptions form-group col-sm-2 text-center  px-1">
-                        <button type="reset" class=" btn px-3 py-1 m-auto" id="add" value="add">
+                    <div class="add formOptions form-group col-sm-2 text-center px-1">
+                        <button type="reset" class="btn px-3 py-1 m-auto" id="add" value="add">
                             Add
                         </button>
                         <button type="button" class="btn uploadButton m-auto px-3 py-1" id="uploadButton"
@@ -94,18 +93,22 @@
 
             <!------------------------------------ Output Table ------------------------------->
             <div class="output row mx-0 w-100">
-
                 <!------------------------------------ Search Button ------------------------------->
                 <div class="row functionWrapper mx-auto py-1">
                     <div class="rows col-2 d-flex px-0 justify-content-between m-auto">
-                        <input type="number" class="rowInput form-control" placeholder="rows" id="rowInput" value="5">
-                        <button type="button" class="px-2 filterButton" onclick="showRows()"> Filter</button>
+                        <input type="number" class="rowInput form-control" placeholder="rows" id="rowInput" value="5" />
+                        <button type="button" class="px-2 filterButton" onclick="showRows()">
+                            Filter
+                        </button>
                     </div>
                     <div class="input-group col-10 pr-0 d-flex">
-                        <input type="text" class="searchInput form-control" id="search" placeholder="Search..">
-                        <button type="button" class=" searchButton px-2" onclick="searchTable()">Search</button>
-                        <button type="button" class=" cancelButton px-2 border-left-0"
-                            onclick="cancelSearch()">Cancel</button>
+                        <input type="text" class="searchInput form-control" id="search" placeholder="Search.." />
+                        <button type="button" class="searchButton px-2" onclick="searchTable()">
+                            Search
+                        </button>
+                        <button type="button" class="cancelButton px-2 border-left-0" onclick="cancelSearch()">
+                            Cancel
+                        </button>
                     </div>
                 </div>
 
@@ -114,14 +117,19 @@
 
                         <thead class="sticky-top">
                             <tr>
-                                <th scope="col" id="headerSNo" onclick="unsort()">S.No </th>
-                                <th scope="col" onclick="nameSort()" id="headerName">Name
+                                <th scope="col" id="headerSNo" onclick="unsort()">S.No</th>
+                                <th scope="col" onclick="nameSort()" id="headerName">Name</th>
+                                <th scope="col" onclick="emailSort()" id="headerEmail">
+                                    Email
                                 </th>
-                                <th scope="col" onclick="emailSort()" id="headerEmail">Email</th>
                                 <th scope="col">Category</th>
-                                <th scope="col" onclick="dateOfBirthSort()" id="headerDateOfBirth">Birthday</th>
-                                <th scope="col" onclick="numberSort()" id="headerNumber">Number</th>
-                                <th scope="col">Action</th>
+                                <th scope="col" onclick="dateOfBirthSort()" id="headerDateOfBirth">
+                                    Birthday
+                                </th>
+                                <th scope="col" onclick="numberSort()" id="headerNumber">
+                                    Number
+                                </th>
+                                <th scope="col" onclick="deleteAll()">Action</th>
                             </tr>
                         </thead>
 
@@ -130,23 +138,21 @@
                                 <td colspan="7">😄😄Welcome Sir. Please Enter Data😄😄</td>
                             </tr>
                         </tbody>
+
                     </table>
                 </div>
-                <div class=" row mx-auto summery">
-                    <div class="col-sm-4 px-0">
+                <div class="row mx-auto summery">
+                    <div class="col-sm-5 px-0">
                         <span id="range"></span>
                     </div>
-                    <div class="col-sm-8 text-right px-0" id="paginationWrapper">
-                    </div>
+                    <div class="col-sm-7 text-right px-0" id="paginationWrapper"></div>
                 </div>
-
             </div>
         </div>
 
         <!------------------------------------- Footer --------------------------------------->
         <footer class="footer row w-100 mx-0 sticky-bottom">
             <h5 class="col-3 m-auto">
-
                 <a href="https://www.facebook.com/patientbondhealth/" class="text-white">
                     <i class="fa fa-facebook-square" aria-hidden="true"></i>
                 </a>
@@ -162,22 +168,22 @@
                 <a href="https://twitter.com/patientbond" class="text-white">
                     <i class="fa-brands fa-twitter-square"></i>
                 </a>
-
-
             </h5>
             <h6 class="col-6 m-auto text-center">Copyright © 2022 PatientBond</h6>
-            <h6 class="col-3 text-center m-auto author">Crafted with ❤️ By Krish</h6>
-
+            <h6 class="col-3 text-center m-auto author">
+                Crafted with ❤️ By Krish
+            </h6>
         </footer>
         <!-- Modal for delete row -->
         <div class="modal" id="removeModal">
             <div class="modal-dialog">
                 <div class="modal-content">
-
                     <!-- Modal Header -->
                     <div class="modal-header">
                         <h4 class="modal-title">Remove Data</h4>
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <button type="button" class="close" data-dismiss="modal">
+                            &times;
+                        </button>
                     </div>
 
                     <!-- Modal body -->
@@ -188,10 +194,13 @@
                     <!-- Modal footer -->
                     <div class="modal-footer">
                         <button type="button" class="btn btn-primary confirmRemove" data-dismiss="modal"
-                            onclick="deleteData(delIndex)">Confirm</button>
-                        <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+                            onclick="deleteData(delIndex)">
+                            Confirm
+                        </button>
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">
+                            Cancel
+                        </button>
                     </div>
-
                 </div>
             </div>
         </div>
@@ -200,22 +209,23 @@
         <div class="modal" id="infoModal">
             <div class="modal-dialog">
                 <div class="modal-content">
-
                     <!-- Modal Header -->
                     <div class="modal-header border-0">
                         <h4 class="modal-title">User's info</h4>
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <button type="button" class="close" data-dismiss="modal">
+                            &times;
+                        </button>
                     </div>
 
                     <!-- Modal body -->
-                    <div class="modal-body m-auto " id="showInfo">
-                    </div>
+                    <div class="modal-body m-auto" id="showInfo"></div>
 
                     <!-- Modal footer -->
                     <div class="modal-footer border-0">
-                        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">
+                            Close
+                        </button>
                     </div>
-
                 </div>
             </div>
         </div>
@@ -224,24 +234,26 @@
         <div class="modal" id="editModal">
             <div class="modal-dialog">
                 <div class="modal-content">
-
                     <!-- Modal Header -->
                     <div class="modal-header">
                         <h4 class="modal-title">Edit User's info</h4>
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <button type="button" class="close" data-dismiss="modal">
+                            &times;
+                        </button>
                     </div>
 
                     <!-- Modal body -->
-                    <div class="modal-body" id="editInfo">
-                    </div>
+                    <div class="modal-body" id="editInfo"></div>
 
                     <!-- Modal footer -->
                     <div class="modal-footer">
-                        <button type="button" id="updateButton" class="btn text-white"
-                            onclick="updateData(delIndex)">Update</button>
-                        <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+                        <button type="button" id="updateButton" class="btn text-white" onclick="updateData(delIndex)">
+                            Update
+                        </button>
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">
+                            Cancel
+                        </button>
                     </div>
-
                 </div>
             </div>
         </div>
@@ -250,7 +262,6 @@
     <!-- Toastr Js -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
-
 
     <!--Bootstrap Js-->
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"
@@ -265,7 +276,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/js/bootstrap-datepicker.js"></script>
 
     <!--Font Awesome -->
-    <script src="https://kit.fontawesome.com/ca550e5eb3.js" crossorigin="anonymous"></script>
+    <script src="https://kit.fontawesome.com/5a117b07b0.js" crossorigin="anonymous"></script>
 
     <!--Custom JavaScript-->
     <script src="User Management.js"></script>

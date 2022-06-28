@@ -1,6 +1,6 @@
-var data = [];
-var originalArray = [];
-var pagedData = [];
+var data = []; // All functionalities like searching,sorting etc are performed on this array.
+var originalArray = []; // Original Array which modifies only on editing,deleting and adding.
+var pagedData = []; // Array for showing pagination
 var emailRegex =
   /^([a-zA-Z0-9_\.\-\+])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
 var nameOrder = false;
@@ -8,11 +8,11 @@ var emailOrder = false;
 var numberOrder = false;
 var dateOfBirthOrder = false;
 var currentPage = 1;
-var from,
-  to,
-  oldPageAnchor,
-  newPageAnchor,
-  noOfRows = 5;
+var from, //starting point of slicing data array
+  to, // Ending point of slicing data array
+  oldPageAnchor, // current page.
+  newPageAnchor, // future current page. Both changes dynamically on clicking
+  noOfRows = 5; //rows on a page
 $(document).ready(function () {
   data = [];
   var name = "",
@@ -158,10 +158,18 @@ $(document).ready(function () {
     $("#search").val();
 
     // Remove sorting icon from name header
-    $("#headerName").html("Name <i class='fas fa-sort'></i>");
-    $("#headerEmail").html("Email <i class='fas fa-sort'></i>");
-    $("#headerDateOfBirth").html("Birthday <i class='fas fa-sort'></i>");
-    $("#headerNumber").html("Number <i class='fas fa-sort'></i>");
+    $("#headerName").html(
+      "Name <i class='fa-solid fa-arrow-down'></i><i class='fa-solid fa-arrow-up'></i>"
+    );
+    $("#headerEmail").html(
+      "Email <i class='fa-solid fa-arrow-down'></i><i class='fa-solid fa-arrow-up'></i>"
+    );
+    $("#headerDateOfBirth").html(
+      "Birthday <i class='fa-solid fa-arrow-down'></i><i class='fa-solid fa-arrow-up'></i>"
+    );
+    $("#headerNumber").html(
+      "Number <i class='fa-solid fa-arrow-down'></i><i class='fa-solid fa-arrow-up'></i>"
+    );
 
     //Unsorting array
     if (originalArray.length != 0) {
@@ -183,11 +191,15 @@ $(document).ready(function () {
       number: number,
     });
 
+    //Calling function for showing data and pagination
     showPageNav();
     showPage(1);
-    var newPageAnchor = document.getElementById("pg" + currentPage);
+
+    //Adding selected class to page 1.
+    newPageAnchor = document.getElementById("pg" + currentPage);
     newPageAnchor.className = "pg-selected";
 
+    // Showing search and row filter
     $(".functionWrapper").css("visibility", "visible");
 
     //storing original data in a temporary array for sorting
@@ -226,6 +238,7 @@ function checkDuplicateNumber(checkNumber) {
 function searchTable() {
   let content = $("#search").val().toLowerCase();
   if (content != "") {
+    // Searching for matched rows and updating data array.
     data = originalArray.filter((item) => {
       return (
         item.name.toLowerCase().includes(content) ||
@@ -235,52 +248,67 @@ function searchTable() {
         item.number.toLowerCase().includes(content)
       );
     });
+
+    //Calling function for showing data and pagination
     showPageNav();
     showPage(1);
+
     console.log("Original array after search");
     console.log(originalArray);
     console.log("Search Results");
     console.log(data);
-  } else toastr.info("Please enter something to search");
+  }
+  // If search input in empty.
+  else toastr.info("Please enter something to search");
 }
 //----------------------------------If user clears the search bar or row filter------------------------------------//
 $("#search").on("keyup", () => {
   if ($("#search").val() == "") cancelSearch();
 });
+
 $("#rowInput").on("keyup", () => {
-  if ($("#rowInput").val() == "") noOfRows = 5;
+  if ($("#rowInput").val() == "") {
+    noOfRows = 5;
+    $("#rowInput").val(noOfRows);
+  }
+
+  //Calling function for showing data and pagination
   showPageNav();
   showPage(1);
 });
 //-------------------------------Cancel table search function------------------------------//
 function cancelSearch() {
+  // Emptying search and No data found row
   $("#search").val("");
   $("#empty").remove();
   for (let i = 0; i < originalArray.length; i++) data[i] = originalArray[i];
+
+  //Calling function for showing data and pagination
   showPageNav();
   showPage(1);
+
   console.log("After canceling search");
   console.log(data);
 }
 
 //---------------------------------Delete Details Modal Function-----------------------------------//
 function deleteData(index) {
+  //deleting form original Array.
   for (let i = 0; i < originalArray.length; i++) {
     if (data[index].email == originalArray[i].email) originalArray.splice(i, 1);
   }
 
-  //delete from array
+  //delete from data array
   data.splice(index, 1);
 
   // if only one element matches search
   if (data.length == 0) {
     for (let i = 0; i < originalArray.length; i++) data[i] = originalArray[i];
   }
-  //print table
-  // showTable(data);
-  console.log("fd"+pagedData.length);
+
+  //Calling function for showing data and pagination
   showPageNav();
-  if(data.length % noOfRows==0 && pagedData.length==1)
+  if (data.length % noOfRows == 0 && pagedData.length == 1)
     showPage(Math.ceil(data.length / noOfRows));
   else showPage(currentPage);
 
@@ -292,11 +320,21 @@ function deleteData(index) {
         <td colspan="7">😄😄Welcome Sir. Please Enter Data😄😄</td>
       </tr>`
     );
+
+    // Changing icons of header columns to unsorted
     $(".functionWrapper").css("visibility", "hidden");
-    $("#headerName").html("Name <i class='fas fa-sort'></i>");
-    $("#headerEmail").html("Email <i class='fas fa-sort'></i>");
-    $("#headerDateOfBirth").html("Birthday <i class='fas fa-sort'></i>");
-    $("#headerNumber").html("Number <i class='fas fa-sort'></i>");
+    $("#headerName").html(
+      "Name <i class='fa-solid fa-arrow-down'></i><i class='fa-solid fa-arrow-up'></i>"
+    );
+    $("#headerEmail").html(
+      "Email <i class='fa-solid fa-arrow-down'></i><i class='fa-solid fa-arrow-up'></i>"
+    );
+    $("#headerDateOfBirth").html(
+      "Birthday <i class='fa-solid fa-arrow-down'></i><i class='fa-solid fa-arrow-up'></i>"
+    );
+    $("#headerNumber").html(
+      "Number <i class='fa-solid fa-arrow-down'></i><i class='fa-solid fa-arrow-up'></i>"
+    );
   }
 
   // clearing search box;
@@ -371,8 +409,10 @@ function editData(index) {
 
 //---------------------------------update Details Modal Function-----------------------------------//
 function updateData(index) {
+  //modal will not close unless you fill all data
   $("#updateButton").removeAttr("data-dismiss");
-  //checking validation of edited data
+
+  //Validating if data is'nt empty
   if ($("#edName").val() == "") {
     toastr.warning("Enter Name First");
     return false;
@@ -439,22 +479,24 @@ function updateData(index) {
     return false;
   }
 
+  //Updating data in array
   data[index].name = $("#edName")
     .val()
     .toLowerCase()
     .split(" ")
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(" ")
-    .replace(/\s+/g, " ")
+    .replace(/\s+/g, " ") //trim all extra white spaces
     .trim();
   data[index].email = $("#edEmail").val().replace(/\s+/g, " ").trim();
   data[index].category = $("#edCategory").val();
   data[index].dateOfBirth = $("#edDateOfBirth").val();
   data[index].number = $("#edNumber").val();
 
-  //printing table
-  // showTable(data);
+  //unsorting every time after updating a row
   unsort();
+
+  //Calling function for showing data
   showRecords(from, to);
 
   toastr.success("Data edited successfully");
@@ -490,24 +532,36 @@ function viewDetails(index) {
 
 //-----------------------------------------Sorting on basis of Name-----------------------------------------//
 function nameSort() {
+  // toggle order for aesc and desc search
   nameOrder = !nameOrder;
+
   if (data.length != 0) {
     if (nameOrder) {
-      $("#headerName").html(
-        `Name <i class="fa fa-sort-asc" aria-hidden="true"></i>`
+      //changing icon of name header according to sort
+      $("#headerName").html(`Name <i class="fa-solid fa-arrow-down-a-z"></i>`);
+      $("#headerEmail").html(
+        "Email <i class='fa-solid fa-arrow-down'></i><i class='fa-solid fa-arrow-up'></i>"
       );
-      $("#headerEmail").html("Email <i class='fas fa-sort'></i>");
-      $("#headerDateOfBirth").html("Birthday <i class='fas fa-sort'></i>");
-      $("#headerNumber").html("Number <i class='fas fa-sort'></i>");
+      $("#headerDateOfBirth").html(
+        "Birthday <i class='fa-solid fa-arrow-down'></i><i class='fa-solid fa-arrow-up'></i>"
+      );
+      $("#headerNumber").html(
+        "Number <i class='fa-solid fa-arrow-down'></i><i class='fa-solid fa-arrow-up'></i>"
+      );
     } else {
-      $("#headerName").html(
-        `Name <i class="fa fa-sort-desc" aria-hidden="true"></i>`
+      $("#headerName").html(`Name <i class="fa-solid fa-arrow-down-z-a"></i>`);
+      $("#headerEmail").html(
+        "Email <i class='fa-solid fa-arrow-down'></i><i class='fa-solid fa-arrow-up'></i>"
       );
-      $("#headerEmail").html("Email <i class='fas fa-sort'></i>");
-      $("#headerDateOfBirth").html("Birthday <i class='fas fa-sort'></i>");
-      $("#headerNumber").html("Number <i class='fas fa-sort'></i>");
+      $("#headerDateOfBirth").html(
+        "Birthday <i class='fa-solid fa-arrow-down'></i><i class='fa-solid fa-arrow-up'></i>"
+      );
+      $("#headerNumber").html(
+        "Number <i class='fa-solid fa-arrow-down'></i><i class='fa-solid fa-arrow-up'></i>"
+      );
     }
 
+    //sorting in aesc and desc
     nameOrder
       ? data.sort((a, b) =>
           a.name.toLowerCase() > b.name.toLowerCase() ? 1 : -1
@@ -516,11 +570,11 @@ function nameSort() {
           a.name.toLowerCase() < b.name.toLowerCase() ? 1 : -1
         );
 
-    // showTable(da);
+    //Calling function for showing data
     showRecords(from, to);
+
     console.log("Original array after sorting by name");
     console.log(originalArray);
-
     console.log("Array after sorting");
     console.log(data);
   }
@@ -528,23 +582,40 @@ function nameSort() {
 
 //-----------------------------------------Sorting on basis of Email-----------------------------------------//
 function emailSort() {
+  // toggle order for aesc and desc search
   emailOrder = !emailOrder;
+
   if (data.length != 0) {
     if (emailOrder) {
+      //changing icon of email header according to sort
       $("#headerEmail").html(
-        `Email <i class="fa fa-sort-asc" aria-hidden="true"></i>`
+        `Email <i class="fa-solid fa-arrow-down-a-z"></i>`
       );
-      $("#headerName").html("Name <i class='fas fa-sort'></i>");
-      $("#headerDateOfBirth").html("Birthday <i class='fas fa-sort'></i>");
-      $("#headerNumber").html("Number <i class='fas fa-sort'></i>");
+      $("#headerName").html(
+        "Name <i class='fa-solid fa-arrow-down'></i><i class='fa-solid fa-arrow-up'></i>"
+      );
+      $("#headerDateOfBirth").html(
+        "Birthday <i class='fa-solid fa-arrow-down'></i><i class='fa-solid fa-arrow-up'></i>"
+      );
+      $("#headerNumber").html(
+        "Number <i class='fa-solid fa-arrow-down'></i><i class='fa-solid fa-arrow-up'></i>"
+      );
     } else {
       $("#headerEmail").html(
-        `Email <i class="fa fa-sort-desc" aria-hidden="true"></i>`
+        `Email <i class="fa-solid fa-arrow-down-z-a"></i>`
       );
-      $("#headerName").html("Name <i class='fas fa-sort'></i>");
-      $("#headerDateOfBirth").html("Birthday <i class='fas fa-sort'></i>");
-      $("#headerNumber").html("Number <i class='fas fa-sort'></i>");
+      $("#headerName").html(
+        "Name <i class='fa-solid fa-arrow-down'></i><i class='fa-solid fa-arrow-up'></i>"
+      );
+      $("#headerDateOfBirth").html(
+        "Birthday <i class='fa-solid fa-arrow-down'></i><i class='fa-solid fa-arrow-up'></i>"
+      );
+      $("#headerNumber").html(
+        "Number <i class='fa-solid fa-arrow-down'></i><i class='fa-solid fa-arrow-up'></i>"
+      );
     }
+
+    //sorting in aesc and desc
     emailOrder
       ? data.sort((a, b) =>
           a.email.toLowerCase() > b.email.toLowerCase() ? 1 : -1
@@ -553,11 +624,11 @@ function emailSort() {
           a.email.toLowerCase() < b.email.toLowerCase() ? 1 : -1
         );
 
-    // showTable(data);
+    //Calling function for showing data
     showRecords(from, to);
+
     console.log("Original array after sorting by email");
     console.log(originalArray);
-
     console.log("Array after sorting");
     console.log(data);
   }
@@ -565,23 +636,40 @@ function emailSort() {
 
 //-----------------------------------------Sorting on basis of Birthday-----------------------------------------//
 function dateOfBirthSort() {
+  // toggle order for aesc and desc search
   dateOfBirthOrder = !dateOfBirthOrder;
+
   if (data.length != 0) {
+    //changing icon of birthday header according to sort
     if (dateOfBirthOrder) {
       $("#headerDateOfBirth").html(
-        `Birthday <i class="fa fa-sort-asc" aria-hidden="true"></i>`
+        `Birthday <i class="fa-solid fa-arrow-down-1-9"></i>`
       );
-      $("#headerName").html("Name <i class='fas fa-sort'></i>");
-      $("#headerEmail").html("Email <i class='fas fa-sort'></i>");
-      $("#headerNumber").html("Number <i class='fas fa-sort'></i>");
+      $("#headerName").html(
+        "Name <i class='fa-solid fa-arrow-down'></i><i class='fa-solid fa-arrow-up'></i>"
+      );
+      $("#headerEmail").html(
+        "Email <i class='fa-solid fa-arrow-down'></i><i class='fa-solid fa-arrow-up'></i>"
+      );
+      $("#headerNumber").html(
+        "Number <i class='fa-solid fa-arrow-down'></i><i class='fa-solid fa-arrow-up'></i>"
+      );
     } else {
       $("#headerDateOfBirth").html(
-        `Birthday <i class="fa fa-sort-desc" aria-hidden="true"></i>`
+        `Birthday <i class="fa-solid fa-arrow-down-9-1"></i>`
       );
-      $("#headerName").html("Name <i class='fas fa-sort'></i>");
-      $("#headerEmail").html("Email <i class='fas fa-sort'></i>");
-      $("#headerNumber").html("Number <i class='fas fa-sort'></i>");
+      $("#headerName").html(
+        "Name <i class='fa-solid fa-arrow-down'></i><i class='fa-solid fa-arrow-up'></i>"
+      );
+      $("#headerEmail").html(
+        "Email <i class='fa-solid fa-arrow-down'></i><i class='fa-solid fa-arrow-up'></i>"
+      );
+      $("#headerNumber").html(
+        "Number <i class='fa-solid fa-arrow-down'></i><i class='fa-solid fa-arrow-up'></i>"
+      );
     }
+
+    //sorting in aesc and desc
     dateOfBirthOrder
       ? data.sort((a, b) =>
           new Date(a.dateOfBirth).getTime() > new Date(b.dateOfBirth).getTime()
@@ -593,11 +681,12 @@ function dateOfBirthSort() {
             ? 1
             : -1
         );
-    // showTable(data);
+
+    //Calling function for showing data
     showRecords(from, to);
+
     console.log("Original array after sorting by date of birth");
     console.log(originalArray);
-
     console.log("Array after sorting");
     console.log(data);
   }
@@ -605,23 +694,38 @@ function dateOfBirthSort() {
 
 //-------------------------------------------Sorting on basis of Number-------------------------------------------//
 function numberSort() {
+  // toggle order for aesc and desc search
   numberOrder = !numberOrder;
   if (data.length != 0) {
+    //changing icon of number header according to sort
     if (numberOrder) {
       $("#headerNumber").html(
-        `Number <i class="fa fa-sort-asc" aria-hidden="true"></i>`
+        `Number <i class="fa-solid fa-arrow-down-1-9"></i>`
       );
-      $("#headerName").html("Name <i class='fas fa-sort'></i>");
-      $("#headerEmail").html("Email <i class='fas fa-sort'></i>");
-      $("#headerDateOfBirth").html("Birthday <i class='fas fa-sort'></i>");
+      $("#headerName").html(
+        "Name <i class='fa-solid fa-arrow-down'></i><i class='fa-solid fa-arrow-up'></i>"
+      );
+      $("#headerEmail").html(
+        "Email <i class='fa-solid fa-arrow-down'></i><i class='fa-solid fa-arrow-up'></i>"
+      );
+      $("#headerDateOfBirth").html(
+        "Birthday <i class='fa-solid fa-arrow-down'></i><i class='fa-solid fa-arrow-up'></i>"
+      );
     } else {
       $("#headerNumber").html(
-        `Number <i class="fa fa-sort-desc" aria-hidden="true"></i>`
+        `Number <i class="fa-solid fa-arrow-down-9-1"></i>`
       );
-      $("#headerName").html("Name <i class='fas fa-sort'></i>");
-      $("#headerEmail").html("Email <i class='fas fa-sort'></i>");
-      $("#headerDateOfBirth").html("Birthday <i class='fas fa-sort'></i>");
+      $("#headerName").html(
+        "Name <i class='fa-solid fa-arrow-down'></i><i class='fa-solid fa-arrow-up'></i>"
+      );
+      $("#headerEmail").html(
+        "Email <i class='fa-solid fa-arrow-down'></i><i class='fa-solid fa-arrow-up'></i>"
+      );
+      $("#headerDateOfBirth").html(
+        "Birthday <i class='fa-solid fa-arrow-down'></i><i class='fa-solid fa-arrow-up'></i>"
+      );
     }
+    //sorting in aesc and desc
     numberOrder
       ? data.sort((a, b) =>
           a.number.toLowerCase() > b.number.toLowerCase() ? 1 : -1
@@ -630,11 +734,11 @@ function numberSort() {
           a.number.toLowerCase() < b.number.toLowerCase() ? 1 : -1
         );
 
-    // showTable(data);
+    //Calling function for showing data
     showRecords(from, to);
+
     console.log("Original array after sorting by number");
     console.log(originalArray);
-
     console.log("Array after sorting");
     console.log(data);
   }
@@ -642,6 +746,7 @@ function numberSort() {
 
 //-------------------------------------Print Table in page Function---------------------------------//
 function showTable(array) {
+  //Printing data of array on page.
   $("tbody").html("");
   for (let i = 0; i < array.length; i++) {
     $("#tbody").append(
@@ -714,6 +819,7 @@ function showTable(array) {
         </td>
       </tr>`
     );
+    // Giving row colors according to job role.
     if (array[i].category == "Developer") {
       $(`#row${i + 1}`).css("background", "rgba(0, 255, 128,.2)");
     } else if (array[i].category == "QA/Tester") {
@@ -728,14 +834,24 @@ function showTable(array) {
 
 //-------------------------------------Unsort table in original array Function---------------------------------//
 function unsort() {
+  //Changing sorted icon to unsorted
   if (originalArray.length != 0) {
-    $("#headerName").html("Name <i class='fas fa-sort'></i>");
-    $("#headerEmail").html("Email <i class='fas fa-sort'></i>");
-    $("#headerDateOfBirth").html("Birthday <i class='fas fa-sort'></i>");
-    $("#headerNumber").html("Number <i class='fas fa-sort'></i>");
+    $("#headerName").html(
+      "Name <i class='fa-solid fa-arrow-down'></i><i class='fa-solid fa-arrow-up'></i>"
+    );
+    $("#headerEmail").html(
+      "Email <i class='fa-solid fa-arrow-down'></i><i class='fa-solid fa-arrow-up'></i>"
+    );
+    $("#headerDateOfBirth").html(
+      "Birthday <i class='fa-solid fa-arrow-down'></i><i class='fa-solid fa-arrow-up'></i>"
+    );
+    $("#headerNumber").html(
+      "Number <i class='fa-solid fa-arrow-down'></i><i class='fa-solid fa-arrow-up'></i>"
+    );
+
+    //checking if user is not unsorting with search applied
     if ($("#search").val() == "") {
       for (let i = 0; i < originalArray.length; i++) data[i] = originalArray[i];
-      console.log("hello");
       showPageNav();
       showPage(1);
     }
@@ -743,40 +859,60 @@ function unsort() {
     else {
       searchTable();
     }
+    //changing sort order of all columns.
+    nameOrder = emailOrder = dateOfBirthOrder = numberOrder = false;
   }
 }
-var noOfRows = 5;
+
+//------------------------------------------Row Filter------------------------------------//
 function showRows() {
+  //Checking no of rows that are going to be on page.
   noOfRows = $("#rowInput").val();
+  //Calling function for showing data and pagination
   showPageNav();
   showPage(1);
 }
-//pagination
 
+//------------------------------------------Pagination-------------------------------------//
+
+//------------------------------------------ Showing Rows on page ------------------------------------------//
 function showRecords(from, to) {
-  if (from == 0) {
+  // Changing cursor to blocked on next prev first last button according to current page.
+  if (Math.ceil(data.length / noOfRows) > 1) {
+    if (from == 0) {
+      $("#pg-prev").css("cursor", "not-allowed");
+      $("#pg-first").css("cursor", "not-allowed");
+      $("#pg-next").css("cursor", "pointer");
+      $("#pg-last").css("cursor", "pointer");
+    } else if (data.length <= to) {
+      $("#pg-next").css("cursor", "not-allowed");
+      $("#pg-last").css("cursor", "not-allowed");
+      $("#pg-prev").css("cursor", "pointer");
+      $("#pg-first").css("cursor", "pointer");
+    } else {
+      $("#pg-prev").css("cursor", "pointer");
+      $("#pg-first").css("cursor", "pointer");
+      $("#pg-next").css("cursor", "pointer");
+      $("#pg-last").css("cursor", "pointer");
+    }
+  } else {
     $("#pg-prev").css("cursor", "not-allowed");
     $("#pg-first").css("cursor", "not-allowed");
-    $("#pg-next").css("cursor", "pointer");
-    $("#pg-last").css("cursor", "pointer");
-  } else if (to == originalArray.length) {
     $("#pg-next").css("cursor", "not-allowed");
     $("#pg-last").css("cursor", "not-allowed");
-    $("#pg-prev").css("cursor", "pointer");
-    $("#pg-first").css("cursor", "pointer");
-  } else {
-    $("#pg-prev").css("cursor", "pointer");
-    $("#pg-first").css("cursor", "pointer");
-    $("#pg-next").css("cursor", "pointer");
-    $("#pg-last").css("cursor", "pointer");
   }
 
+  //Data that will be on page.
   pagedData = data.slice(from, to);
+
+  //calling showTable function to print table data.
   showTable(pagedData);
+
+  //Information about no. of entries on current page.
   $("#range").css("display", "block");
   if (data.length < to)
     $("#range").html(
-      `Showing ${from + 1} to ${data.length} entries from ${
+      `Showing ${from + 1} to ${data.length} entries from total ${
         data.length
       } entries`
     );
@@ -786,23 +922,27 @@ function showRecords(from, to) {
     );
   }
 }
-
+//------------------------------------------ For Current page OR switching pages ------------------------------------//
 function showPage(pageNumber) {
-  console.log("page " + pageNumber);
-  console.log(currentPage);
   if (data.length != 0) {
+    //checking if oldPageAnchor becomes null.
+    //For search cases where no.of searched pages are less than total pages.
     if (currentPage <= Math.ceil(data.length / noOfRows)) {
       oldPageAnchor = document.getElementById("pg" + currentPage);
       oldPageAnchor.className = "pg-normal";
     }
-    currentPage = pageNumber;
+    currentPage = pageNumber; //changing current page.
+    //Updating pagination bar
+    showPageNav();
     newPageAnchor = document.getElementById("pg" + currentPage);
     newPageAnchor.className = "pg-selected";
     from = (pageNumber - 1) * noOfRows;
     to = parseInt((pageNumber - 1) * noOfRows) + parseInt(noOfRows);
-    console.log(currentPage);
+
+    // Showing data in array
     showRecords(from, to);
   } else {
+    //when nothing matches search input
     $("#tbody").html("");
     $("#tbody").append(
       `<tr id="empty">
@@ -812,64 +952,129 @@ function showPage(pageNumber) {
     $("#range").html(`Showing 0 entries from total 0 entries`);
   }
 }
+
+// For jumping directly on First page | << |
 function firstPage() {
   showPage(1);
 }
+
+// For previous page
 function prev() {
   if (currentPage > 1) {
     showPage(currentPage - 1);
   }
 }
+
+// For next page
 function next() {
   if (currentPage < data.length / noOfRows) {
     showPage(currentPage + 1);
   }
 }
 
+// For jumping directly on Last page | >> |
 function lastPage() {
   showPage(Math.ceil(data.length / noOfRows));
 }
 
+//------------------------------------------------- For pagination bar ---------------------------------------//
 function showPageNav() {
   var pagerHtml =
-    '<span onclick="firstPage()" id="pg-first" class="pg-normal"><<</span>' +
-    '<span onclick="prev()" id="pg-prev" class="pg-normal">Previous</span>';
-  for (var page = 1; page <= Math.ceil(data.length / noOfRows); page++) {
-    pagerHtml +=
-      '<span id="pg' +
-      page +
-      '" class="pg-normal" onclick="showPage(' +
-      page +
-      ')">' +
-      page +
-      "</span> ";
+    '<span onclick="firstPage()" id="pg-first" class="pg-normal"><<</span>' + // | << |
+    '<span onclick="prev()" id="pg-prev" class="pg-normal">Prev</span>'; // | Prev |
+  if (Math.ceil(data.length / noOfRows) > 5) {
+    if (currentPage >= 4) {
+      pagerHtml +=
+        '<span id="pg1"' +
+        'class="pg-normal"' +
+        'onclick="showPage(1)">' +
+        "1" +
+        "</span> " +
+        '<span id="other"' +
+        'class="pg-normal">' +
+        "..." +
+        "</span> ";
+      if (currentPage <= Math.ceil(data.length / noOfRows) - 4) {
+        for (var page = currentPage - 1; page <= currentPage + 1; page++) {
+          pagerHtml +=
+            '<span id="pg' +
+            page +
+            '" class="pg-normal" onclick="showPage(' +
+            page +
+            ')">' +
+            page +
+            "</span> ";
+        }
+        pagerHtml +=
+          '<span id="other"' + 'class="pg-normal">' + "..." + "</span> "; // | ... |
+        pagerHtml +=
+          '<span id="pg' +
+          Math.ceil(data.length / noOfRows) +
+          '" class="pg-normal" onclick="showPage(' +
+          Math.ceil(data.length / noOfRows) +
+          ')">' +
+          Math.ceil(data.length / noOfRows) +
+          "</span> ";
+      } else {
+        for (
+          var page = Math.ceil(data.length / noOfRows) - 4;
+          page <= Math.ceil(data.length / noOfRows);
+          page++
+        ) {
+          pagerHtml +=
+            '<span id="pg' +
+            page +
+            '" class="pg-normal" onclick="showPage(' +
+            page +
+            ')">' +
+            page +
+            "</span> ";
+        }
+      }
+    } else {
+      for (var page = 1; page <= 3; page++) {
+        pagerHtml +=
+          '<span id="pg' +
+          page +
+          '" class="pg-normal" onclick="showPage(' +
+          page +
+          ')">' +
+          page +
+          "</span> ";
+      }
+      pagerHtml +=
+        '<span id="other"' + 'class="pg-normal">' + "..." + "</span> ";
+      pagerHtml +=
+        '<span id="pg' +
+        Math.ceil(data.length / noOfRows) +
+        '" class="pg-normal" onclick="showPage(' +
+        Math.ceil(data.length / noOfRows) +
+        ')">' +
+        Math.ceil(data.length / noOfRows) +
+        "</span> ";
+    }
+  } else {
+    for (var page = 1; page <= Math.ceil(data.length / noOfRows); page++) {
+      pagerHtml +=
+        '<span id="pg' +
+        page +
+        '" class="pg-normal" onclick="showPage(' +
+        page +
+        ')">' +
+        page +
+        "</span> ";
+    }
   }
+
   pagerHtml +=
-    '<span onclick="next()" class="pg-normal" id="pg-next"> Next</span>' +
-    '<span onclick="lastPage()" id="pg-last" class="pg-normal">>></span>';
-  element = $("#paginationWrapper").html(pagerHtml);
+    '<span onclick="next()" class="pg-normal" id="pg-next"> Next</span>' + //  | Next |
+    '<span onclick="lastPage()" id="pg-last" class="pg-normal">>></span>'; //   | >> |
+  $("#paginationWrapper").html(pagerHtml);
+  $("#other").css("cursor", "not-allowed"); //changing cursor type of | ... | button to blocked.
 }
-
-//css for toastr
-toastr.options = {
-  closeButton: true,
-  debug: false,
-  newestOnTop: false,
-  progressBar: false,
-  positionClass: "toast-top-right",
-  preventDuplicates: true,
-  onclick: null,
-  showDuration: "300",
-  hideDuration: "1000",
-  timeOut: "2000",
-  extendedTimeOut: "1000",
-  showEasing: "swing",
-  hideEasing: "linear",
-  showMethod: "fadeIn",
-  hideMethod: "fadeOut",
-};
-
+//------------------------------------Upload hard coded data--------------------------------//
 function uploadData() {
+  //Adding data to original array.
   originalArray.push(
     {
       name: "John",
@@ -977,23 +1182,59 @@ function uploadData() {
       number: "2234567899",
     }
   );
+  //Pushing into data array
   for (let i = 0; i < originalArray.length; i++) data[i] = originalArray[i];
   $(".functionWrapper").css("visibility", "visible");
-  //$('#uploadButton').css("display", "none");
-  // Remove sorting icon from name header
+
+  //if you want to add more data comment below line
+  //but it will behave unusually because email and number will be same.
+  //$("#uploadButton").css("display", "none");
+
+  // Adding/Changing sorted icon in th header
   $("#headerSNo").html(
     "S.No <i class='fa-solid fa-arrow-down-up-across-line'></i>"
   );
-  $("#headerName").html("Name <i class='fas fa-sort'></i>");
-  $("#headerEmail").html("Email <i class='fas fa-sort'></i>");
-  $("#headerDateOfBirth").html("Birthday <i class='fas fa-sort'></i>");
-  $("#headerNumber").html("Number <i class='fas fa-sort'></i>");
+  $("#headerName").html(
+    "Name <i class='fa-solid fa-arrow-down'></i><i class='fa-solid fa-arrow-up'></i>"
+  );
+  $("#headerEmail").html(
+    "Email <i class='fa-solid fa-arrow-down'></i><i class='fa-solid fa-arrow-up'></i>"
+  );
+  $("#headerDateOfBirth").html(
+    "Birthday <i class='fa-solid fa-arrow-down'></i><i class='fa-solid fa-arrow-up'></i>"
+  );
+  $("#headerNumber").html(
+    "Number <i class='fa-solid fa-arrow-down'></i><i class='fa-solid fa-arrow-up'></i>"
+  );
+
+  //Calling function for showing data and pagination
   showPageNav();
   showPage(1);
-  var newPageAnchor = document.getElementById("pg" + currentPage);
+
+  //Adding selected class to page 1.
+  newPageAnchor = $(`#pg${currentPage}`);
   newPageAnchor.className = "pg-selected";
   console.log("Original array after upload");
   console.log(originalArray);
   console.log("Data array after upload");
   console.log(data);
 }
+
+//---------------------------------------css for toastr---------------------------------//
+toastr.options = {
+  closeButton: true,
+  debug: false,
+  newestOnTop: false,
+  progressBar: false,
+  positionClass: "toast-top-right",
+  preventDuplicates: true,
+  onclick: null,
+  showDuration: "300",
+  hideDuration: "1000",
+  timeOut: "2000",
+  extendedTimeOut: "1000",
+  showEasing: "swing",
+  hideEasing: "linear",
+  showMethod: "fadeIn",
+  hideMethod: "fadeOut",
+};
